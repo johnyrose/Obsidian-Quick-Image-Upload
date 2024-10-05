@@ -3,7 +3,7 @@
 	"name": "Quick Image Upload",
 	"version": "1.0.0",
 	"minAppVersion": "0.12.0",
-	"description": "Quickly upload an image from your phone by clicking the extension.",
+	"description": "Upload an image from your phone immediately by clicking the extension.",
 	"author": "Jonathan Rosenboim",
 	"authorUrl": "https://github.com/johnyrose",
 	"isDesktopOnly": false
