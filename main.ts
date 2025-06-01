@@ -39,20 +39,37 @@ export default class QuickImageUploadPlugin extends Plugin {
     const inputEl = document.createElement('input');
     inputEl.type = 'file';
     inputEl.accept = ACCEPTED_FILE_TYPES;
+    inputEl.multiple = true;
     inputEl.style.display = 'none';
-    inputEl.addEventListener('change', () => this.handleFileSelection(inputEl.files?.[0]));
+    inputEl.setAttribute('capture', 'environment');
+    inputEl.addEventListener('change', (event) => {
+      const files = (event.target as HTMLInputElement).files;
+      if (files) {
+        new Notice(`Selected ${files.length} files`);
+        this.handleFileSelection(files);
+      }
+    });
     return inputEl;
   }
 
-  async handleFileSelection(file?: File) {
-    if (!file) return;
+  async handleFileSelection(files: FileList) {
+    if (!files || files.length === 0) {
+      new Notice('No files selected');
+      return;
+    }
+    
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const fileName = await this.saveFileToVault(file, arrayBuffer);
-      await this.insertImageLink(fileName);
+      new Notice(`Processing ${files.length} files...`);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const arrayBuffer = await file.arrayBuffer();
+        const fileName = await this.saveFileToVault(file, arrayBuffer);
+        await this.insertImageLink(fileName);
+      }
+      new Notice('All files processed successfully');
     } catch (error) {
-      console.error('Error uploading image:', error);
-      new Notice('Failed to upload image.');
+      console.error('Error uploading images:', error);
+      new Notice('Failed to upload one or more images.');
     }
   }
 
